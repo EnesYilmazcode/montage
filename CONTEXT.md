@@ -70,3 +70,4 @@ Units are meters, y-up, floor at y = 0. Any figure that is estimated, not measur
 ## Status log
 
 - 10:10 AM Oct 24: repo public; schedule widget live; scope locked; capture not started.
+- 11:50 AM Oct 24: candidate method found: World from Motion (arXiv 2607.01202; code github.com/GradientSpaces/World-from-Motion; weights on Hugging Face). Dynamic 4D Gaussians from monocular video, plus generated novel views. License and runtime not yet confirmed. Research fleet running (code audit, paper read, generator scout, room integration). No decision yet. Generated views must be labeled.
