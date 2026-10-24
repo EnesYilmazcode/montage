@@ -69,6 +69,8 @@ Units are meters, y-up, floor at y = 0. Any figure that is estimated, not measur
 
 ## Status log
 
+- Tested image pipeline: `modal_uniworld.py` runs the bundled UniWorld-View room image on an A100 80GB. Completed a 49-frame orbit (6.125s) and an 81-frame translated flight (10.125s), both 544x736. Generated examples are in `examples/`; full local artifacts are in `outputs/uniworld/` and `outputs/uniworld-flight/`. Weights persist in `uniworld-view-data` in the `colinl-code` Modal workspace, separate from `montage-data`. All test jobs are stopped. The CLI wrapper includes dependency pins and a repaired checkpoint loader. These tests cover single-image generation; real footage and dynamic-video inference remain untested by this runner.
+
 - 10:10 AM Oct 24: repo public; schedule widget live; scope locked; capture not started.
 - 10:40 AM Oct 24: candidate method found: World from Motion (arXiv 2607.01202; code github.com/GradientSpaces/World-from-Motion; weights on Hugging Face). Dynamic 4D Gaussians from monocular video, plus generated novel views. License and runtime not yet confirmed. Research fleet running (code audit, paper read, generator scout, room integration). No decision yet. Generated views must be labeled.
 - Fleet result (all four reports in the montage folder, local only): World from Motion is a NO-GO for this hackathon. Its video pipeline needs a private weights bundle, and its own tests do not cover handheld or fast motion. Its generator invents views and was trained on synthetic data.

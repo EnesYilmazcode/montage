@@ -5,3 +5,9 @@
 !SETUP.md
 !PLAN.md
 __pycache__/
+.DS_Store
+.venv/
+UniWorld-View/
+outputs/
+.env
+.env.*
