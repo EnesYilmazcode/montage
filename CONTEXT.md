@@ -69,6 +69,8 @@ Units are meters, y-up, floor at y = 0. Any figure that is estimated, not measur
 
 ## Status log
 
+- Dynamic-video pipeline tested: `modal_uniworld.py` now accepts video inputs, resamples to the requested fps, estimates geometry with STream3R, and tracks foreground with SAM2. A 41-frame clip at 16 fps completed a 40-degree camera arc at 848x480. Fixed the disabled STream3R initializer and a config import collision; foreground prompts propagate together in one pass. Video inputs and results stay under ignored `outputs/`, outside GitHub. The additional geometry weights are cached in `uniworld-view-data`.
+
 - Tested image pipeline: `modal_uniworld.py` runs the bundled UniWorld-View room image on an A100 80GB. Completed a 49-frame orbit (6.125s) and an 81-frame translated flight (10.125s), both 544x736. Generated examples are in `examples/`; full local artifacts are in `outputs/uniworld/` and `outputs/uniworld-flight/`. Weights persist in `uniworld-view-data` in the `colinl-code` Modal workspace, separate from `montage-data`. All test jobs are stopped. The CLI wrapper includes dependency pins and a repaired checkpoint loader. These tests cover single-image generation; real footage and dynamic-video inference remain untested by this runner.
 
 - 10:10 AM Oct 24: repo public; schedule widget live; scope locked; capture not started.

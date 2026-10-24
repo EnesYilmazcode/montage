@@ -39,7 +39,7 @@ image = (
 
 
 @app.function(image=image, volumes={"/data": volume}, timeout=7200, cpu=8, memory=32768)
-def prepare():
+def prepare(video: bool = False):
     """Download on CPU so weight transfer does not consume GPU time."""
     import os
     import sys
@@ -72,12 +72,18 @@ def prepare():
     ]:
         hf_hub_download(repo, name, local_dir=str(root / subdir))
         volume.commit()
+    if video:
+        print("Downloading STream3R video geometry weights", flush=True)
+        snapshot_download("yslan/STream3R", local_dir=str(root / "STream3R"),
+                          allow_patterns=["*.json", "*.safetensors"], max_workers=4)
+        volume.commit()
     return "Weights and Python imports ready"
 
 
 @app.function(image=image, gpu="A100-80GB", volumes={"/data": volume}, timeout=3600, cpu=8, memory=131072)
 def generate(input_data: bytes | None, filename: str, frames: int, angle: float,
-             x: float = 0.0, y: float = 0.0, z: float = 0.0):
+             x: float = 0.0, y: float = 0.0, z: float = 0.0,
+             video: bool = False, fps: int = 16):
     import os
     import subprocess
     import sys
@@ -85,6 +91,15 @@ def generate(input_data: bytes | None, filename: str, frames: int, angle: float,
 
     os.chdir("/opt/uniworld")
     checkpoints = Path("checkpoints")
+    if video:
+        # Propagate one foreground object from all prompts in one pass.
+        demo_path = Path("demo.py")
+        demo_path.write_text(demo_path.read_text().replace(
+            "for label_i in range(sam_labels.shape[0]):", "for label_i in range(1):"
+        ).replace(
+            "sam_points[label_i:label_i+1], sam_labels[label_i:label_i+1]",
+            "sam_points, sam_labels",
+        ))
     # The upstream low-memory loader imports a removed Diffusers helper. Use
     # PyTorch's supported assign=True loading and verify every checkpoint key.
     Path("inference_modal.py").write_text('''
@@ -93,6 +108,7 @@ import runpy
 import shutil
 from pathlib import Path
 import torch
+from configs.infer_config import get_parser
 from accelerate import init_empty_weights
 from safetensors.torch import load_file
 from model.uniview_transformer import WanVACETransformer3DModel
@@ -125,6 +141,37 @@ def load_transformer(cls, pretrained_model_path, subfolder=None,
     return model
 
 WanVACETransformer3DModel.from_pretrained = load_transformer
+
+import demo
+
+def setup_stream3r(self):
+    self.stream3r = None
+    if self.opts.mode == "dynamic_view":
+        print("Loading STream3R video geometry model", flush=True)
+        self.stream3r = demo.STream3R.from_pretrained(self.opts.stream3r_path).eval()
+
+original_geometry = demo.UniScene._estimate_geometry_stream3r
+def estimate_geometry(self, frames_np):
+    print(f"Estimating camera poses and depth for {len(frames_np)} frames", flush=True)
+    with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
+        result = original_geometry(self, frames_np)
+    self.stream3r.to("cpu")
+    torch.cuda.empty_cache()
+    return result
+
+def run_sam2_video(self, video, state, points, labels, bboxes):
+    self.sampredictor.add_new_points_or_box(
+        state, frame_idx=0, obj_id=1, points=points, labels=labels, box=bboxes)
+    masks, paintings = [], []
+    for frame, _, logits in self.sampredictor.propagate_in_video(state):
+        mask = (torch.sum(logits > 0.0, dim=0)[0] > 0.0).cpu().numpy()
+        masks.append(mask)
+        paintings.append(demo.mask_painter(video[frame], mask.astype("uint8"), 3, 0.7, 2, 5))
+    return masks, paintings
+
+demo.UniScene.setup_stream3r = setup_stream3r
+demo.UniScene._estimate_geometry_stream3r = estimate_geometry
+demo.UniScene.run_sam2_video = run_sam2_video
 runpy.run_path("inference.py", run_name="__main__")
 ''')
     # Keep the upstream download helpers; symlink each weight bundle separately.
@@ -137,19 +184,29 @@ runpy.run_path("inference.py", run_name="__main__")
     else:
         source = Path("/tmp") / Path(filename).name
         source.write_bytes(input_data)
+    original_source = source
+    if video:
+        source = Path("/tmp/uniworld-resampled.mp4")
+        subprocess.run([
+            "ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", str(original_source),
+            "-vf", f"fps={fps}", "-frames:v", str(frames), "-an", "-c:v", "libx264",
+            "-crf", "18", str(source),
+        ], check=True)
     name = f"{source.stem}-{int(time.time())}"
     command = [
         sys.executable, "inference_modal.py", "--image_dir", str(source),
         "--out_dir", "/data/outputs", "--exp_name", name,
-        "--mode", "single_view", "--video_length", str(frames),
+        "--mode", "dynamic_view" if video else "single_view", "--video_length", str(frames),
         "--height", "480", "--width", "832", "--d_phi", str(angle),
         "--x_offset", str(x), "--y_offset", str(y), "--z_offset", str(z),
         "--render_method", "warp", "--ddim_steps", "8",
         "--diffusion_guidance_scale", "4.0", "--prompt", "",
     ]
+    if video:
+        command += ["--fps", str(fps), "--low_gpu_memory_mode", "true"]
     output = Path("/data/outputs") / name
     output.mkdir(parents=True, exist_ok=True)
-    (output / "input.png").write_bytes(source.read_bytes())
+    (output / ("source.mp4" if video else "input.png")).write_bytes(original_source.read_bytes())
     try:
         with (output / "run.log").open("w") as log:
             process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
@@ -168,13 +225,14 @@ runpy.run_path("inference.py", run_name="__main__")
 @app.local_entrypoint()
 def main(input: str = "", frames: int = 49, angle: float = 35.0,
          x: float = 0.0, y: float = 0.0, z: float = 0.0,
-         output: str = "outputs/uniworld"):
+         output: str = "outputs/uniworld", fps: int = 16):
     if frames < 5 or (frames - 1) % 4:
         raise ValueError("frames must be 4n+1 and at least 5")
     source = Path(input) if input else None
+    video = source is not None and source.suffix.lower() in {".mp4", ".mov", ".mkv", ".webm", ".avi"}
     data = source.read_bytes() if source else None
-    print(prepare.remote())
-    artifacts = generate.remote(data, source.name if source else "", frames, angle, x, y, z)
+    print(prepare.remote(video))
+    artifacts = generate.remote(data, source.name if source else "", frames, angle, x, y, z, video, fps)
     destination = Path(output)
     for name, content in artifacts.items():
         path = destination / name
