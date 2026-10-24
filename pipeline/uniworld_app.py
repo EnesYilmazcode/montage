@@ -109,6 +109,19 @@ def run_test(clip: str = "inputs/test_clip.mp4", d_phi: int = 50):
         "--prompt", "",
         "--geometry_backend", "stream3r",
     ]
+    # Upstream comments out the STream3R load line, so the stream3r geometry path
+    # fails with AttributeError. Enable that one line inside this container only.
+    demo_py = f"{REPO}/demo.py"
+    with open(demo_py, encoding="utf-8") as f:
+        text = f.read()
+    text = text.replace(
+        "#self.stream3r = STream3R.from_pretrained",
+        "self.stream3r = STream3R.from_pretrained",
+    )
+    with open(demo_py, "w", encoding="utf-8") as f:
+        f.write(text)
+    print("STream3R checkpoint files:", os.listdir(f"{VOL_CKPT}/STream3R"), flush=True)
+
     subprocess.run(cmd, cwd=REPO, check=True)
     vol.commit()
     return sorted(os.listdir(out))
