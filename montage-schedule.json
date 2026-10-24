@@ -1,0 +1,38 @@
+{
+  "countdown": {
+    "label": "Video submit (deadline to confirm; planned 09:30)",
+    "at": "2026-10-25T09:30:00"
+  },
+  "days": {
+    "2026-10-24": {
+      "title": "Sat 10-24 montage",
+      "blocks": [
+        { "start": "10:10", "end": "10:40", "name": "Setup", "note": "Repo, CONTEXT.md, friend added as collaborator, widget live" },
+        { "start": "10:40", "end": "11:30", "name": "Capture", "note": "Room walk-around (1x lens, locked exposure, tilt-up for ceiling). 10 side-view jump shots, all logged" },
+        { "start": "11:30", "end": "12:15", "name": "Modal: upload + splat job", "note": "Clips to Modal Volume. Start room splat training" },
+        { "start": "12:15", "end": "13:00", "name": "Lunch + ball keyframes", "note": "Pick the best side-view clip. Click 5 to 10 ball keyframes by hand" },
+        { "start": "13:00", "end": "15:00", "name": "Viewer v0", "note": "Static splat renders in the browser with orbit controls" },
+        { "start": "15:00", "end": "16:30", "name": "Pose run", "note": "GVHMR on the chosen clip (needs SMPL files). Export skeleton JSON" },
+        { "start": "16:30", "end": "18:00", "name": "Place the shot", "note": "4-point floor alignment. Skeleton and ball trail inside the splat" },
+        { "start": "18:00", "end": "19:00", "name": "Dinner + go/no-go", "note": "Placement looks right: keep going. If not: billboard cutout of the jump" },
+        { "start": "19:00", "end": "21:30", "name": "Camera path", "note": "Keyframed 30 to 40 degree arc. Raw clip next to the output" },
+        { "start": "21:30", "end": "23:30", "name": "First full render", "note": "Screen-record the viewer. Write the cut list" },
+        { "start": "23:30", "end": "23:59", "name": "Overnight shifts", "note": "Batch renders run on Modal. Swap shifts at 03:00" }
+      ]
+    },
+    "2026-10-25": {
+      "title": "Sun 10-25 montage",
+      "blocks": [
+        { "start": "00:00", "end": "03:00", "name": "Overnight shift B", "note": "Fix, re-render. Batch renders keep running" },
+        { "start": "03:00", "end": "06:00", "name": "Overnight shift A", "note": "Fix, re-render. Scope freeze is at 06:00" },
+        { "start": "06:00", "end": "06:30", "name": "Freeze + pick render", "note": "No new features after 06:00" },
+        { "start": "06:30", "end": "07:30", "name": "Video script", "note": "3:00 cut: hook, REAL vs RENDERED labels, impact line, end card" },
+        { "start": "07:30", "end": "09:00", "name": "RECORD (90 min block)", "note": "Screen capture + narration. Target a 3:00 final" },
+        { "start": "09:00", "end": "09:30", "name": "Export + submit", "note": "Upload, then confirm the submission went through" },
+        { "start": "09:30", "end": "10:00", "name": "Buffer", "note": "No changes after 09:30" },
+        { "start": "10:00", "end": "10:30", "name": "Hacking ends", "note": "Stop committing" },
+        { "start": "10:30", "end": "11:00", "name": "Judging", "note": "Live discussion. Pitch: shot-form review, then the replay" }
+      ]
+    }
+  }
+}

@@ -1,3 +1,4 @@
-# Research notes stay local; only the README is published.
+# Research notes stay local. Only the shared docs are published.
 *.md
 !README.md
+!CONTEXT.md
