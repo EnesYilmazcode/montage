@@ -82,3 +82,10 @@ Steps, in order:
 10. **Publish.** Host the final mp4 on Firebase Hosting (free). Submit by the deadline.
 
 Deadline reference: submit by 9:30 AM Oct 25, not yet confirmed.
+
+## Correction (3:40 PM Oct 24)
+
+- Atlas is an API. It needs no weight download. Geometry (camera pose and depth per frame) comes from it, and so do generated views (Atlas Preview or the API), labeled as generated.
+- The 60 GB UniWorld-View weights and the PyTorch3D build are NOT needed. They were for the open-source generator. Stopped on okawau2024. Partial files may remain in that workspace's `montage-data` volume; delete them later.
+- Remaining GPU work is small: train the room splat (gsplat, minutes), cut out the shooter (SAM2, small weights), and render the camera path. These need a small image without PyTorch3D.
+- Depth links from the 47-frame job are valid for 24 hours from 12:10 PM EDT Oct 24. Download them before then.
