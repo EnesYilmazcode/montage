@@ -83,6 +83,13 @@ Cost estimates: an A100 80GB is about $2.50 per hour on Modal. Current balance i
 
 Deadlines to hit: the first test result by 6 PM, the first full render by 11 PM, scope freeze at 6 AM, record 7:30 to 9:00 AM, submit by 9:30 AM Oct 25.
 
+## Friend's Modal account: options (unverified; the billing docs do not say)
+
+- Credits and volumes are most likely per workspace, so his $30 pays only for jobs run from his workspace. Check his Modal dashboard before relying on this.
+- Model weights come from Hugging Face. His workspace can download them directly, in parallel, without waiting on ours. That costs his storage and build time.
+- Simplest option: keep all GPU runs in one workspace, topped up by card. If he wants to use his credits, he runs the same app under his own login. Nobody shares tokens.
+- Do not share Modal tokens, keys, or login details here or in chat.
+
 ## Agent steps (done by the agent, not you)
 
 - Create the Modal volume and upload the SMPL files, after Step 1.
