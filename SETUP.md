@@ -73,6 +73,13 @@ Do them in this order. Each step says when it's done.
 - Build the viewer on Firebase, then deploy it to `montage-hack-2026`.
 - Keep `CONTEXT.md` and `montage-schedule.json` current, and push after each change.
 
+## SMPL license limits (from the SMPL-Model License text)
+
+- Research, education, and artistic use only, non-commercial. The license is personal to the person who downloads the files.
+- The files may not be shared or redistributed to a third party. Keep the SMPL files only in the Modal volume (`montage-data`) or on the laptop.
+- Your friend should download his own copy on his own account, if his agent runs the body model.
+- Ship only rendered output (video or images), never the model files and never a live service that runs the body model.
+
 ## Rules for this repo
 
 - Public repo. No secrets, no contacts, no raw video, no splat files.
