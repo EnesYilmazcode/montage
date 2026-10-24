@@ -19,7 +19,7 @@ vol = modal.Volume.from_name("montage-data", create_if_missing=True)
 
 image = (
     modal.Image.from_registry("nvidia/cuda:12.4.1-devel-ubuntu22.04", add_python="3.10")
-    .apt_install("git", "build-essential", "ninja-build", "ffmpeg", "libgl1", "libglib2.0-0", "libeigen3-dev")
+    .apt_install("git", "build-essential", "clang", "ninja-build", "ffmpeg", "libgl1", "libglib2.0-0", "libeigen3-dev")
     .env({"TORCH_CUDA_ARCH_LIST": "8.0;9.0", "FORCE_CUDA": "1"})
     .pip_install("torch==2.4.0", "torchvision==0.19.0", index_url="https://download.pytorch.org/whl/cu124")
     .run_commands(
