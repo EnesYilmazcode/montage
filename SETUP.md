@@ -66,6 +66,23 @@ Do them in this order. Each step says when it's done.
 1. I can draft a two-line email asking whether a pre-event room scan counts as disclosed prior work.
 2. You approve the draft. I do not send it until you say so.
 
+## Net steps, in order (updated 11:05 AM Oct 24)
+
+Cost estimates: an A100 80GB is about $2.50 per hour on Modal. Current balance is about $4.30. The test run needs about $2. A day of renders needs about $20.
+
+1. **[Agent] Finish the UniWorld-View build and weight download.** Build is running; a clang fix is in. Done when the weights sit in the `montage-data` volume.
+2. **[Agent] Test the demo on a sample clip from the repo.** One A100 80GB run, about $1 to $2. Done when a camera-path output comes back.
+3. **[You] Top up Modal.** Tell me the amount first. You add it on the billing page yourself, since I can't add payment details.
+4. **[You] Capture the room.** Walk the empty room with the phone, locked exposure, 3 to 5 minutes, with tilt-up passes for the ceiling. Send the file or the folder path.
+5. **[You and friend] Capture the shot.** 3 to 6 clean jump shots from side and front spots, the ball in frame, a hoop or marker visible. Send the files.
+6. **[Agent] Upload and process the room.** Build the background splat on Modal, about $1 to $2.
+7. **[Agent] Run UniWorld-View on the real shot,** with a camera path around the shooter. Compare the output against the source frames.
+8. **[Agent] Decide the composite.** Either the generated flyaround already shows the room, or we merge it with the room splat, which needs the frame alignment step.
+9. **[Agent] Build the video.** Remotion, with clear labels: REAL footage, and GENERATED views. About 3 minutes.
+10. **[You] Review and approve** the cut, then submit it on the hackathon form.
+
+Deadlines to hit: the first test result by 6 PM, the first full render by 11 PM, scope freeze at 6 AM, record 7:30 to 9:00 AM, submit by 9:30 AM Oct 25.
+
 ## Agent steps (done by the agent, not you)
 
 - Create the Modal volume and upload the SMPL files, after Step 1.
