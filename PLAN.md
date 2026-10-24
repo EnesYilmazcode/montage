@@ -64,3 +64,21 @@ A pre-scanned room. The friend films a shot on one phone. The virtual camera fli
 1. Go on the multi-take real-pixel plan above.
 2. Confirm the room. Capture needs a room you can film in, with no people.
 3. The friend's phone and his GitHub username.
+
+## Current plan (updated 1:50 PM Oct 24)
+
+What changed: Marble Developer API access works. `images2PosedRGBD` returns a camera pose and a depth map for each frame, from ordinary photos. That gives us room geometry without LiDAR. The Studio tool "Atlas Preview" makes generated views. Generated views stay labeled. The real path stays the core.
+
+Steps, in order:
+1. **Room walk-around (you).** 30 to 60 seconds, slow, chest height, no people, tilt up for the ceiling. Also measure one wall length with a tape. We use it as the scale check.
+2. **Shot clip (you and friend).** About 10 seconds from the side, the shooter in frame, same room.
+3. **Frames.** Pull about 40 to 80 frames from the walk-around, one per second. Pull 10 to 20 frames from the shot clip.
+4. **Geometry test.** Send 8 frames through the API first to check the limits. Then run the full set in one job, room and shot frames together. If they share one coordinate frame, registration is solved. Check the scale against the tape measure.
+5. **Room splat.** Build the room splat on Modal, using the API poses and depths as the starting points.
+6. **Shooter.** Cut the shooter out of the shot frames with SAM2 (its weights are already on the volume). Place the cutout on the floor spot from the registered shot cameras.
+7. **Camera path.** A scripted fly-through, staying inside the observed views. Keep the orbit within about 30 to 40 degrees of the shot camera.
+8. **Optional generated extra.** Run an Atlas Preview view on a room photo for one wider shot. Label it GENERATED on screen.
+9. **Video.** About 3 minutes, in Remotion. Raw footage first, then the room, then the fly-through. Label REAL and GENERATED. Credits and a short honesty note at the end.
+10. **Publish.** Host the final mp4 on Firebase Hosting (free). Submit by the deadline.
+
+Deadline reference: submit by 9:30 AM Oct 25, not yet confirmed.
