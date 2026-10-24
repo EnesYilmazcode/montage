@@ -70,8 +70,8 @@ Units are meters, y-up, floor at y = 0. Any figure that is estimated, not measur
 ## Status log
 
 - 10:10 AM Oct 24: repo public; schedule widget live; scope locked; capture not started.
-- 11:50 AM Oct 24: candidate method found: World from Motion (arXiv 2607.01202; code github.com/GradientSpaces/World-from-Motion; weights on Hugging Face). Dynamic 4D Gaussians from monocular video, plus generated novel views. License and runtime not yet confirmed. Research fleet running (code audit, paper read, generator scout, room integration). No decision yet. Generated views must be labeled.
+- 10:40 AM Oct 24: candidate method found: World from Motion (arXiv 2607.01202; code github.com/GradientSpaces/World-from-Motion; weights on Hugging Face). Dynamic 4D Gaussians from monocular video, plus generated novel views. License and runtime not yet confirmed. Research fleet running (code audit, paper read, generator scout, room integration). No decision yet. Generated views must be labeled.
 - Fleet result (all four reports in the montage folder, local only): World from Motion is a NO-GO for this hackathon. Its video pipeline needs a private weights bundle, and its own tests do not cover handheld or fast motion. Its generator invents views and was trained on synthetic data.
 - Next candidate: TrajectoryCrafter, after its license is read. Fallback: real takes plus room splat, with any generated view labeled.
 - Merge risk: the room and the subject must share one frame. Estimate a Sim(3) from marker and background points, and check the feet on the floor.
-- Status: capture has not started, and the 10:40 AM capture block has passed. Needs: a room, the friend's GitHub username, and a go on the real-take plan.
+- Status: capture has not started. The capture block is starting now (schedule: 10:40 to 11:30 AM). Needs: a room, the friend's GitHub username, and a go on the real-take plan.

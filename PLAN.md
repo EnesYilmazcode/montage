@@ -1,4 +1,4 @@
-# Montage: plan (proposed, 2026-10-24, 11:35 AM)
+# Montage: plan (proposed, 2026-10-24, 10:40 AM)
 
 Status: proposal. Needs a go from both people before the schedule changes.
 
