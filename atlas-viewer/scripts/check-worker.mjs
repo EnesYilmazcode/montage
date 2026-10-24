@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import worker from '../worker/index.js';
+const camera={extrinsics:{coordinateSystem:'rub',position:[0,0,0],quaternion:[0,0,0,1]},intrinsics:{width:1280,height:720,fx:900,fy:900,cx:640,cy:360}};
+const frame={camera,imageAsset:{assetId:'asset_original'},depth:{depthAsset:{assetId:'asset_depth'}}};
+const env={WLT_API_KEY:'test-secret-key',SCENE_JSON:JSON.stringify({frames:[frame]})};
+let called=false;
+globalThis.fetch=async(url,options)=>{called=true;assert.equal(options.headers['WLT-Api-Key'],env.WLT_API_KEY);const payload=JSON.parse(options.body);assert.equal(payload.returnDepth,true);assert.equal(payload.targetCameras.length,1);return Response.json({id:'op_test1234',done:false})};
+const home=await worker.fetch(new Request('https://viewer.test/'),env);
+assert.equal(home.status,200);const html=await home.text();assert(!html.includes(env.WLT_API_KEY));assert(html.includes('WASD')||html.includes('W A S D'));assert(html.includes('Render with Atlas'));
+const scene=await worker.fetch(new Request('https://viewer.test/api/scene'),env);assert(!JSON.stringify(await scene.json()).includes(env.WLT_API_KEY));
+const request=(body,origin='https://viewer.test')=>new Request('https://viewer.test/api/render',{method:'POST',headers:{'Content-Type':'application/json','Origin':origin,'Idempotency-Key':'test-request-123'},body:JSON.stringify(body)});
+assert.equal((await worker.fetch(request({camera,frames:[frame]}),env)).status,400);assert(!called,'Pure rotation must be rejected before a paid task');
+assert.equal((await worker.fetch(request({camera},'https://other.test'),env)).status,403);assert(!called,'Cross-origin writes must be rejected');
+const translated=structuredClone(camera);translated.extrinsics.position[0]=.25;
+assert.equal((await worker.fetch(request({camera:translated,frames:[frame]}),env)).status,200);assert(called);
+assert.equal((await worker.fetch(new Request('https://viewer.test/api/asset?id=../../secret'),env)).status,400);
+console.log('Worker checks passed: secret isolation, camera validation, origin checks, Atlas request shape.');
